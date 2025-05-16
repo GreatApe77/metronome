@@ -2,15 +2,15 @@ import 'package:metronome/metronome.dart';
 import 'package:metronome/tick.dart';
 
 class MetronomeImpl implements Metronome {
-  int _bpm = 192;
+  int _bpm = 200;
 
   // ignore: unnecessary_getters_setters
   int get bpm => _bpm;
 
-  set bpm(int bpm) {
+  @override
+  setBpm(int bpm) {
     _bpm = bpm;
   }
-  
 
   @override
   Stream<Tick> tickStream() async* {
@@ -22,6 +22,4 @@ class MetronomeImpl implements Metronome {
       await Future.delayed(Duration(milliseconds: intervalInMs));
     }
   }
-
-  ///Converts bpm to a period in seconds
 }
