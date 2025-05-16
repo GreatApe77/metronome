@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:metronome/metronome.dart';
+import 'package:metronome/metronome_impl.dart';
+import 'package:metronome/tick.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +60,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int _tickCounter = 0;
+  final Metronome metronome = MetronomeImpl();
+  late StreamSubscription<Tick> sub;
 
+  @override
+  void initState() {
+    super.initState();
+    sub = metronome.tickStream().listen(_onTick);
+  }
+  void _onTick(Tick metronomeTick){
+    setState(() {
+      _tickCounter++;
+    });
+  }
+  @override
+  void dispose() {
+    super.dispose();
+
+    sub.cancel();
+  } 
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -107,6 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              '$_tickCounter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
