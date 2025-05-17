@@ -1,25 +1,55 @@
+import 'dart:async';
+
+import 'package:metronome/disposable.dart';
 import 'package:metronome/metronome.dart';
 import 'package:metronome/tick.dart';
 
-class MetronomeImpl implements Metronome {
+class MetronomeImpl implements Metronome, Disposable {
   int _bpm = 200;
 
-  // ignore: unnecessary_getters_setters
+  final StreamController<Tick> _metronomeStreamController =
+      StreamController<Tick>.broadcast();
+  Timer? _timer;
   int get bpm => _bpm;
 
+  // ignore: unnecessary_getters_setters
   @override
-  setBpm(int bpm) {
-    _bpm = bpm;
+  Future<void> dispose() async {
+    if (_timer != null) {
+      stop();
+    }
+    _metronomeStreamController.close();
   }
 
   @override
-  Stream<Tick> tickStream() async* {
-    final interval = 60 / bpm;
-    final intervalInMs = (interval * 1000).toInt();
+  void setBpm(int bpm) {
+    //stop();
+    _bpm = bpm;
+    //start();
+  }
 
-    while (true) {
-      yield Tick(soundName: 'someSound');
-      await Future.delayed(Duration(milliseconds: intervalInMs));
-    }
+  @override
+  void start() {
+    final intervalInMs = _calculateIntervalInMs();
+    _timer = Timer.periodic(
+      Duration(milliseconds: intervalInMs),
+      (_) => _handleTick(),
+    );
+  }
+
+  @override
+  void stop() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  @override
+  Stream<Tick> tickStream() => _metronomeStreamController.stream;
+  void _handleTick() {
+    _metronomeStreamController.add(Tick(soundName: 'any'));
+  }
+
+  int _calculateIntervalInMs() {
+    return (60000 / bpm).round();
   }
 }
