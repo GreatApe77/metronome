@@ -1,3 +1,3 @@
 class Assets {
-  static const String tickSoundFilePath = 'metronome_tick.mp3';
+  static const String tickSoundFilePath = 'tick.wav';
 }
