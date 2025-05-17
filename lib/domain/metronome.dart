@@ -1,4 +1,4 @@
-import 'package:metronome/tick.dart';
+import 'package:metronome/domain/tick.dart';
 
 abstract interface class Metronome {
   void stop();

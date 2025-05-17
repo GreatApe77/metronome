@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:metronome/assets.dart';
-import 'package:metronome/metronome.dart';
-import 'package:metronome/metronome_impl.dart';
-import 'package:metronome/tick.dart';
+import 'package:metronome/shared/assets.dart';
+import 'package:metronome/domain/metronome.dart';
+import 'package:metronome/data/metronome_impl.dart';
+import 'package:metronome/domain/tick.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -28,12 +28,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     //audioCache.fetchToMemory('metronome_tick.mp3');
     sub = metronome.tickStream().listen(_onTick);
-    
+
     AudioPool.createFromAsset(
       path: Assets.tickSoundFilePath,
       maxPlayers: 30,
       minPlayers: 10,
-
     ).then((value) {
       audioPool = value;
     });
@@ -58,7 +57,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
         title: Text(widget.title),
       ),
       body: Center(
@@ -66,7 +64,6 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-
             Text(
               '$_tickCounter',
               style: Theme.of(context).textTheme.headlineMedium,

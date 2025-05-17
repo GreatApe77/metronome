@@ -1,18 +1,19 @@
 import 'dart:async';
 
-import 'package:metronome/disposable.dart';
-import 'package:metronome/metronome.dart';
-import 'package:metronome/tick.dart';
+import 'package:metronome/domain/disposable.dart';
+import 'package:metronome/domain/metronome.dart';
+import 'package:metronome/domain/tick.dart';
 
 class MetronomeImpl implements Metronome, Disposable {
-  int _bpm = 200;
+  int _bpm = 60;
 
   final StreamController<Tick> _metronomeStreamController =
       StreamController<Tick>.broadcast();
   Timer? _timer;
+  bool _isRunning = false;
   int get bpm => _bpm;
+  bool get isRunning => _isRunning;
 
-  // ignore: unnecessary_getters_setters
   @override
   Future<void> dispose() async {
     if (_timer != null) {
@@ -23,19 +24,19 @@ class MetronomeImpl implements Metronome, Disposable {
 
   @override
   void setBpm(int bpm) {
-    //stop();
     _bpm = bpm;
-    //start();
   }
 
   @override
   void start() {
+    if (_isRunning) return;
     final intervalInMs = _calculateIntervalInMs();
     _handleTick();
     _timer = Timer.periodic(
       Duration(milliseconds: intervalInMs),
       (_) => _handleTick(),
     );
+    _isRunning = true;
   }
 
   @override
@@ -46,11 +47,11 @@ class MetronomeImpl implements Metronome, Disposable {
 
   @override
   Stream<Tick> tickStream() => _metronomeStreamController.stream;
-  void _handleTick() {
-    _metronomeStreamController.add(Tick(soundName: 'any'));
-  }
-
   int _calculateIntervalInMs() {
     return (60000 / bpm).round();
+  }
+
+  void _handleTick() {
+    _metronomeStreamController.add(Tick(tickType: TickType.regular));
   }
 }
