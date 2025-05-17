@@ -31,6 +31,7 @@ class MetronomeImpl implements Metronome, Disposable {
   @override
   void start() {
     final intervalInMs = _calculateIntervalInMs();
+    _handleTick();
     _timer = Timer.periodic(
       Duration(milliseconds: intervalInMs),
       (_) => _handleTick(),

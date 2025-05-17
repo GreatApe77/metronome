@@ -21,34 +21,26 @@ class _HomePageState extends State<HomePage> {
   final Metronome metronome = MetronomeImpl();
   late StreamSubscription<Tick> sub;
 
-  final List<AudioPlayer> players = List.generate(
-    3,
-    (i) => AudioPlayer(playerId: 'tick$i'),
-  );
-  int currentPlayerIndex = 0;
-
-  Future<void> preloadPlayers() async {
-    for (var player in players) {
-      await player.setPlayerMode(PlayerMode.lowLatency);
-      await player.setSource(AssetSource(Assets.tickSoundFilePath));
-    }
-  }
+  AudioPool? audioPool;
 
   @override
   void initState() {
     super.initState();
     //audioCache.fetchToMemory('metronome_tick.mp3');
     sub = metronome.tickStream().listen(_onTick);
-    preloadPlayers();
+    
+    AudioPool.createFromAsset(
+      path: Assets.tickSoundFilePath,
+      maxPlayers: 30,
+      minPlayers: 10,
+
+    ).then((value) {
+      audioPool = value;
+    });
   }
 
   void _onTick(Tick metronomeTick) async {
-    final player = players[currentPlayerIndex];
-    player.stop();
-    player.resume();
-
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-
+    audioPool?.start();
     setState(() {
       _tickCounter++;
     });
@@ -74,7 +66,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
-            
+
             Text(
               '$_tickCounter',
               style: Theme.of(context).textTheme.headlineMedium,
