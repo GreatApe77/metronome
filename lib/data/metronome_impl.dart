@@ -5,13 +5,18 @@ import 'package:metronome/domain/metronome.dart';
 import 'package:metronome/domain/tick.dart';
 
 class MetronomeImpl implements Metronome, Disposable {
-  int _bpm = 60;
+  int _bpm;
 
   final StreamController<Tick> _metronomeStreamController =
       StreamController<Tick>.broadcast();
   Timer? _timer;
   bool _isRunning = false;
+  MetronomeImpl({int bpm = 60}) : _bpm = bpm;
+
+  @override
   int get bpm => _bpm;
+
+  @override
   bool get isRunning => _isRunning;
 
   @override
@@ -43,6 +48,7 @@ class MetronomeImpl implements Metronome, Disposable {
   void stop() {
     _timer?.cancel();
     _timer = null;
+    _isRunning=false;
   }
 
   @override
