@@ -48,7 +48,7 @@ class MetronomeImpl implements Metronome, Disposable {
   void stop() {
     _timer?.cancel();
     _timer = null;
-    _isRunning=false;
+    _isRunning = false;
   }
 
   @override

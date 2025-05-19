@@ -17,7 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _tickCounter = 0;
   final Metronome metronome = MetronomeImpl();
   late StreamSubscription<Tick> sub;
 
@@ -31,18 +30,15 @@ class _HomePageState extends State<HomePage> {
 
     AudioPool.createFromAsset(
       path: Assets.tickSoundFilePath,
-      maxPlayers: 30,
-      minPlayers: 10,
+      maxPlayers: 200,
     ).then((value) {
       audioPool = value;
     });
   }
 
   void _onTick(Tick metronomeTick) async {
-    audioPool?.start();
-    setState(() {
-      _tickCounter++;
-    });
+    //audioPool?.start();
+    setState(() {});
   }
 
   @override
@@ -56,45 +52,68 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+        title: Text('Metronome'),
+        centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_tickCounter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Row(
-              children: [
-                TextButton(
-                  onPressed: () {
-                    metronome.start();
-                  },
-                  child: Text('Play'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    metronome.stop();
-                  },
-                  child: Text('Pause'),
-                ),
-              ],
-            ),
-            TextField(
-              keyboardType: TextInputType.numberWithOptions(
-                signed: false,
-                decimal: false,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      if (metronome.bpm <= 1) return;
+                      setState(() {
+                        metronome.setBpm(metronome.bpm - 1);
+                      });
+                    },
+                    icon: Icon(Icons.remove),
+                  ),
+                  Text(
+                    '${metronome.bpm}',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (metronome.bpm >= 250) return;
+                      setState(() {
+                        metronome.setBpm(metronome.bpm + 1);
+                      });
+                    },
+                    icon: Icon(Icons.add),
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                metronome.setBpm(int.parse(value));
-              },
-              decoration: InputDecoration(label: Text('BPM')),
-            ),
-          ],
+              Text('BPM'),
+              SizedBox(height: 20),
+              Slider(
+                value: metronome.bpm.toDouble(),
+                min: 1,
+                max: 250,
+                onChanged: (value) {
+                  setState(() {
+                    metronome.setBpm(value.toInt());
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.light_mode)),
+                  FloatingActionButton(
+                    onPressed: () {},
+                    child: Icon(Icons.play_arrow),
+                  ),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.music_note)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

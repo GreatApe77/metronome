@@ -18,11 +18,13 @@ void main() {
     sut.setBpm(100);
     expect(sut.bpm, 100);
   });
-  test("Should start and stop the metronome", () {
-    sut.start();
-    expect(sut.isRunning, isTrue);
-    sut.stop();
-    expect(sut.isRunning, isFalse);
-    
-  },);
+  test(
+    "Should start and stop the metronome",
+    () {
+      sut.start();
+      expect(sut.isRunning, isTrue);
+      sut.stop();
+      expect(sut.isRunning, isFalse);
+    },
+  );
 }
