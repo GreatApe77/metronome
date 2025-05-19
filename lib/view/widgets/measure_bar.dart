@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+
+class MeasureBar extends StatelessWidget {
+  final int? currentIndex;
+  final int notesPerMeasure;
+  static const double _height = 10;
+  const MeasureBar({
+    super.key,
+    this.currentIndex,
+    required this.notesPerMeasure,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+      children: List.generate(notesPerMeasure, (index) {
+        if (currentIndex == null || currentIndex != index) {
+          return Container(
+            height: _height,
+            width: _height,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              
+            ),
+          );
+        }
+        return Container(
+          height: _height,
+          width: _height,
+          decoration: BoxDecoration(color: Colors.blue),
+        );
+      }),
+    );
+  }
+}

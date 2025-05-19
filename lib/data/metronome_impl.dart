@@ -6,7 +6,8 @@ import 'package:metronome/domain/tick.dart';
 
 class MetronomeImpl implements Metronome, Disposable {
   int _bpm;
-
+  int _beatCounter = 0;
+  int _beatsPerMeasure = 4;
   final StreamController<Tick> _metronomeStreamController =
       StreamController<Tick>.broadcast();
   Timer? _timer;
@@ -49,6 +50,7 @@ class MetronomeImpl implements Metronome, Disposable {
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
+    _beatCounter = 0;
   }
 
   @override
@@ -58,6 +60,11 @@ class MetronomeImpl implements Metronome, Disposable {
   }
 
   void _handleTick() {
-    _metronomeStreamController.add(Tick(tickType: TickType.regular));
+    final int measureIndex = _beatCounter % _beatsPerMeasure;
+    print('MEASURE INDEX: $measureIndex');
+    _metronomeStreamController.add(
+      Tick(tickType: TickType.regular, measureIndex: measureIndex),
+    );
+    _beatCounter++;
   }
 }

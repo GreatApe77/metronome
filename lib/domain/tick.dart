@@ -2,6 +2,6 @@ enum TickType { regular, accent }
 
 class Tick {
   final TickType tickType;
-
-  Tick({required this.tickType});
+  final int measureIndex;
+  Tick({required this.tickType, required this.measureIndex});
 }

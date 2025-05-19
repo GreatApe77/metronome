@@ -6,6 +6,7 @@ import 'package:metronome/shared/assets.dart';
 import 'package:metronome/domain/metronome.dart';
 import 'package:metronome/data/metronome_impl.dart';
 import 'package:metronome/domain/tick.dart';
+import 'package:metronome/view/widgets/measure_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -19,7 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final Metronome metronome = MetronomeImpl();
   late StreamSubscription<Tick> sub;
-
+  int? _currentBeat;
   AudioPool? audioPool;
 
   @override
@@ -38,7 +39,9 @@ class _HomePageState extends State<HomePage> {
 
   void _onTick(Tick metronomeTick) async {
     //audioPool?.start();
-    setState(() {});
+    setState(() {
+      _currentBeat = metronomeTick.measureIndex;
+    });
   }
 
   @override
@@ -62,6 +65,9 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              MeasureBar(notesPerMeasure: 4,
+              currentIndex: _currentBeat,),
+              SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -106,8 +112,18 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   IconButton(onPressed: () {}, icon: Icon(Icons.light_mode)),
                   FloatingActionButton(
-                    onPressed: () {},
-                    child: Icon(Icons.play_arrow),
+                    onPressed: () {
+                      setState(() {
+                        if (metronome.isRunning) {
+                          return metronome.stop();
+                        }
+                        metronome.start();
+                      });
+                    },
+                    child:
+                        metronome.isRunning
+                            ? Icon(Icons.pause)
+                            : Icon(Icons.play_arrow),
                   ),
                   IconButton(onPressed: () {}, icon: Icon(Icons.music_note)),
                 ],
