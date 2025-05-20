@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:metronome/shared/assets.dart';
 import 'package:metronome/domain/metronome.dart';
 import 'package:metronome/data/metronome_impl.dart';
@@ -21,24 +21,45 @@ class _HomePageState extends State<HomePage> {
   final Metronome metronome = MetronomeImpl();
   late StreamSubscription<Tick> sub;
   int? _currentBeat;
-  AudioPool? audioPool;
-
+  SoLoud _soLoud = SoLoud.instance;
   @override
   void initState() {
     super.initState();
     //audioCache.fetchToMemory('metronome_tick.mp3');
     sub = metronome.tickStream().listen(_onTick);
+    _initSoLoud();
 
-    AudioPool.createFromAsset(
+    /* AudioPool.createFromAsset(
       path: Assets.tickSoundFilePath,
       maxPlayers: 200,
     ).then((value) {
       audioPool = value;
-    });
+    }); */
+  }
+
+  Future<void> _initSoLoud() async {
+    await _soLoud.init(
+      bufferSize: 20
+    );
+  }
+
+  Future<void> _playSound() async {
+    try {
+      final source = await _soLoud.loadAsset(
+        'assets/${Assets.tickSoundFilePath}',
+        mode: LoadMode.memory,
+        
+ 
+      );
+      await _soLoud.play(source);
+    } on SoLoudException catch (e) {
+      print('Could not play audio',);
+      print(e.description);
+    }
   }
 
   void _onTick(Tick metronomeTick) async {
-    //audioPool?.start();
+    _playSound();
     setState(() {
       _currentBeat = metronomeTick.measureIndex;
     });
@@ -65,8 +86,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              MeasureBar(notesPerMeasure: 4,
-              currentIndex: _currentBeat,),
+              MeasureBar(notesPerMeasure: 4, currentIndex: _currentBeat),
               SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
