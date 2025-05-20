@@ -38,9 +38,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _initSoLoud() async {
-    await _soLoud.init(
-      bufferSize: 20
-    );
+    await _soLoud.init(bufferSize: 20);
   }
 
   Future<void> _playSound() async {
@@ -48,12 +46,10 @@ class _HomePageState extends State<HomePage> {
       final source = await _soLoud.loadAsset(
         'assets/${Assets.tickSoundFilePath}',
         mode: LoadMode.memory,
-        
- 
       );
       await _soLoud.play(source);
     } on SoLoudException catch (e) {
-      print('Could not play audio',);
+      print('Could not play audio');
       print(e.description);
     }
   }

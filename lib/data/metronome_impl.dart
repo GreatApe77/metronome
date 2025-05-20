@@ -15,6 +15,9 @@ class MetronomeImpl implements Metronome, Disposable {
   MetronomeImpl({int bpm = 60}) : _bpm = bpm;
 
   @override
+  int get beatsPerMeasure => _beatsPerMeasure;
+
+  @override
   int get bpm => _bpm;
 
   @override
@@ -55,6 +58,7 @@ class MetronomeImpl implements Metronome, Disposable {
 
   @override
   Stream<Tick> tickStream() => _metronomeStreamController.stream;
+
   int _calculateIntervalInMs() {
     return (60000 / bpm).round();
   }
