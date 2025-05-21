@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class MeasureBar extends StatelessWidget {
   final int? currentIndex;
   final int notesPerMeasure;
-  static const double _height = 10;
+  static const double _height = 15;
+
   const MeasureBar({
     super.key,
     this.currentIndex,
@@ -21,15 +22,17 @@ class MeasureBar extends StatelessWidget {
             height: _height,
             width: _height,
             decoration: BoxDecoration(
-              color: Colors.grey,
-              
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              shape: BoxShape.circle,
             ),
           );
         }
         return Container(
           height: _height,
           width: _height,
-          decoration: BoxDecoration(color: Colors.blue),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+          ),
         );
       }),
     );
