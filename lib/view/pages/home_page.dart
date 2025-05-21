@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
+import 'package:metronome/blocs/theme/theme_bloc.dart';
 import 'package:metronome/shared/assets.dart';
 import 'package:metronome/domain/metronome.dart';
 import 'package:metronome/data/metronome_impl.dart';
@@ -9,9 +11,7 @@ import 'package:metronome/domain/tick.dart';
 import 'package:metronome/view/widgets/measure_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -126,7 +126,19 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.light_mode)),
+                  BlocBuilder<ThemeBloc, ThemeState>(
+                    builder: (context, state) {
+                      return IconButton(
+                        onPressed:
+                            () => context.read<ThemeBloc>().add(ThemeToggled()),
+                        icon: Icon(
+                          state is ThemeDark
+                              ? Icons.light_mode
+                              : Icons.dark_mode,
+                        ),
+                      );
+                    },
+                  ),
                   FloatingActionButton(
                     onPressed: () {
                       setState(() {
