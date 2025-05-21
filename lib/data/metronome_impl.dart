@@ -65,7 +65,7 @@ class MetronomeImpl implements Metronome {
 
   void _handleTick() {
     final int measureIndex = _beatCounter % _beatsPerMeasure;
-    print('MEASURE INDEX: $measureIndex');
+
     _metronomeStreamController.add(
       Tick(tickType: TickType.regular, measureIndex: measureIndex),
     );
