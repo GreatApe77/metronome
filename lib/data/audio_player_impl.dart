@@ -18,15 +18,13 @@ class AudioPlayerImpl implements AudioPlayer, Disposable, Initializable {
   }
 
   @override
-  Future<void> playAudio()async {
-     try {
+  Future<void> playAudio() async {
+    try {
       final source = await _soLoud.loadAsset(
         'assets/${Assets.tickSoundFilePath}',
         mode: LoadMode.memory,
       );
       await _soLoud.play(source);
-    } on SoLoudException catch (e) {
-     
-    }
+    } on SoLoudException catch (e) {}
   }
 }

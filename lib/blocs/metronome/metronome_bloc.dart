@@ -15,11 +15,11 @@ class MetronomeBloc extends Bloc<MetronomeEvent, MetronomeState> {
   MetronomeBloc({
     required Metronome metronome,
     required AudioPlayer audioPlayer,
-  }) : _regularTickBeatPlayer = audioPlayer,
-       _metronome = metronome,
-       super(
-         MetronomeState(bpm: metronome.bpm, isRunning: metronome.isRunning),
-       ) {
+  })  : _regularTickBeatPlayer = audioPlayer,
+        _metronome = metronome,
+        super(
+          MetronomeState(bpm: metronome.bpm, isRunning: metronome.isRunning),
+        ) {
     _tickStreamSub = _metronome.tickStream().listen((tick) {
       add(MetronomeTicked(tick: tick));
     });

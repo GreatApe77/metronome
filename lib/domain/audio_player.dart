@@ -1,3 +1,3 @@
-abstract interface class AudioPlayer{
+abstract interface class AudioPlayer {
   Future<void> playAudio();
 }
