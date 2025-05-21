@@ -26,8 +26,7 @@ class AudioPlayerImpl implements AudioPlayer, Disposable, Initializable {
       );
       await _soLoud.play(source);
     } on SoLoudException catch (e) {
-      print('Could not play audio');
-      print(e.description);
+     
     }
   }
 }

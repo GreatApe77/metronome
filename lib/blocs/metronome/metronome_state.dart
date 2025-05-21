@@ -1,11 +1,16 @@
 part of 'metronome_bloc.dart';
 
-sealed class MetronomeState {}
+final class MetronomeState {
+  final int bpm;
+  final Tick? tick;
+  final bool isRunning;
+  MetronomeState( {required this.bpm,  this.tick, required this.isRunning});
 
-final class MetronomeInitial extends MetronomeState {}
-
-final class MetronomeBeat extends MetronomeState {}
-
-final class MetronomePause extends MetronomeState {}
-
-final class MetronomeStart extends MetronomeState {}
+  MetronomeState copyWith({int? bpm, Tick? tick, bool? isRunning}) {
+    return MetronomeState(
+      bpm: bpm ?? this.bpm,
+      tick: tick ?? this.tick,
+      isRunning: isRunning ?? this.isRunning,
+    );
+  }
+}

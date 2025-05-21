@@ -6,4 +6,22 @@ class MetronomePaused extends MetronomeEvent {}
 
 class MetronomePlayed extends MetronomeEvent {}
 
-class MetronomeBpmChanged extends MetronomeEvent {}
+class MetronomeBpmChanged extends MetronomeEvent {
+  final int bpm;
+
+  MetronomeBpmChanged({required this.bpm});
+}
+
+class MetronomeTicked extends MetronomeEvent {
+  final Tick tick;
+
+  MetronomeTicked({required this.tick});
+}
+
+class MetronomeBpmIncremented extends MetronomeEvent {
+  MetronomeBpmIncremented();
+}
+
+class MetronomeBpmDecremented extends MetronomeEvent {
+  MetronomeBpmDecremented();
+}

@@ -1,6 +1,7 @@
+import 'package:metronome/domain/disposable.dart';
 import 'package:metronome/domain/tick.dart';
 
-abstract interface class Metronome {
+abstract interface class Metronome implements Disposable {
   int get bpm;
   bool get isRunning;
   int get beatsPerMeasure;

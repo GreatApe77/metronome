@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
+import 'package:metronome/blocs/metronome/metronome_bloc.dart';
 import 'package:metronome/blocs/theme/theme_bloc.dart';
 import 'package:metronome/shared/assets.dart';
 import 'package:metronome/domain/metronome.dart';
@@ -26,8 +27,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     //audioCache.fetchToMemory('metronome_tick.mp3');
-    sub = metronome.tickStream().listen(_onTick);
-    _initSoLoud();
+    //sub = metronome.tickStream().listen(_onTick);
+    //_initSoLoud();
 
     /* AudioPool.createFromAsset(
       path: Assets.tickSoundFilePath,
@@ -54,12 +55,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _onTick(Tick metronomeTick) async {
-    _playSound();
-    setState(() {
-      _currentBeat = metronomeTick.measureIndex;
-    });
-  }
+  //void _onTick(Tick metronomeTick) async {
+  // _playSound();
+  // setState(() {
+  //   _currentBeat = metronomeTick.measureIndex;
+  // });
+  //}
 
   @override
   void dispose() {
@@ -82,30 +83,44 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              MeasureBar(notesPerMeasure: 4, currentIndex: _currentBeat),
+              BlocBuilder<MetronomeBloc, MetronomeState>(
+                buildWhen:
+                    (previous, current) =>
+                        previous.tick?.measureIndex !=
+                        current.tick?.measureIndex,
+                builder: (context, state) {
+                  return MeasureBar(
+                    notesPerMeasure: 4,
+                    currentIndex:
+                        state.tick?.measureIndex,
+                  );
+                },
+              ),
               SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
                     onPressed: () {
-                      if (metronome.bpm <= 1) return;
-                      setState(() {
-                        metronome.setBpm(metronome.bpm - 1);
-                      });
+                      context.read<MetronomeBloc>().add(
+                        MetronomeBpmDecremented(),
+                      );
                     },
                     icon: Icon(Icons.remove),
                   ),
-                  Text(
-                    '${metronome.bpm}',
-                    style: Theme.of(context).textTheme.displayLarge,
+                  BlocBuilder<MetronomeBloc, MetronomeState>(
+                    builder: (context, state) {
+                      return Text(
+                        '${state.bpm}',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      );
+                    },
                   ),
                   IconButton(
                     onPressed: () {
-                      if (metronome.bpm >= 250) return;
-                      setState(() {
-                        metronome.setBpm(metronome.bpm + 1);
-                      });
+                      context.read<MetronomeBloc>().add(
+                        MetronomeBpmIncremented(),
+                      );
                     },
                     icon: Icon(Icons.add),
                   ),
@@ -113,14 +128,19 @@ class _HomePageState extends State<HomePage> {
               ),
               Text('BPM'),
               SizedBox(height: 20),
-              Slider(
-                value: metronome.bpm.toDouble(),
-                min: 1,
-                max: 250,
-                onChanged: (value) {
-                  setState(() {
-                    metronome.setBpm(value.toInt());
-                  });
+              BlocBuilder<MetronomeBloc, MetronomeState>(
+                buildWhen: (previous, current) => previous.bpm != current.bpm,
+                builder: (context, state) {
+                  return Slider(
+                    value: state.bpm.toDouble(),
+                    min: 1,
+                    max: 250,
+                    onChanged: (value) {
+                      context.read<MetronomeBloc>().add(
+                        MetronomeBpmChanged(bpm: value.round()),
+                      );
+                    },
+                  );
                 },
               ),
               Row(
@@ -139,19 +159,30 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
-                  FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        if (metronome.isRunning) {
-                          return metronome.stop();
-                        }
-                        metronome.start();
-                      });
+                  BlocBuilder<MetronomeBloc, MetronomeState>(
+                    builder: (context, state) {
+                      return FloatingActionButton(
+                        onPressed: () {
+                          if (state.isRunning) {
+                            context.read<MetronomeBloc>().add(
+                              MetronomePaused(),
+                            );
+                            return;
+                          }
+                          context.read<MetronomeBloc>().add(MetronomePlayed());
+                          /* setState(() {
+                            if (metronome.isRunning) {
+                              return metronome.stop();
+                            }
+                            metronome.start();
+                          }); */
+                        },
+                        child:
+                            state.isRunning
+                                ? Icon(Icons.pause)
+                                : Icon(Icons.play_arrow),
+                      );
                     },
-                    child:
-                        metronome.isRunning
-                            ? Icon(Icons.pause)
-                            : Icon(Icons.play_arrow),
                   ),
                   IconButton(onPressed: () {}, icon: Icon(Icons.music_note)),
                 ],
