@@ -25,3 +25,5 @@ class MetronomeBpmIncremented extends MetronomeEvent {
 class MetronomeBpmDecremented extends MetronomeEvent {
   MetronomeBpmDecremented();
 }
+
+class MetronomeAccentFirstBeatToggled extends MetronomeEvent {}

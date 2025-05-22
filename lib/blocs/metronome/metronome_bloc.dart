@@ -65,6 +65,9 @@ class MetronomeBloc extends Bloc<MetronomeEvent, MetronomeState> {
         emit(state.copyWith(bpm: nextBpm));
       }
     });
+    on<MetronomeAccentFirstBeatToggled>((event, emit) {
+      emit(state.copyWith(accentOnFirstBeat: !state.accentOnFirstBeat));
+    });
   }
   @override
   Future<void> close() {

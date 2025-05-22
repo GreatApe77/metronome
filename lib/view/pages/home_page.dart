@@ -11,11 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
-        title: Text('Metronome'),
-        centerTitle: true,
-      ),
+      
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Center(
@@ -113,7 +109,20 @@ class HomePage extends StatelessWidget {
                       );
                     },
                   ),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.music_note)),
+                  BlocBuilder<MetronomeBloc, MetronomeState>(
+                    buildWhen: (previous, current) =>
+                        previous.accentOnFirstBeat != current.accentOnFirstBeat,
+                    builder: (context, state) {
+                      return Switch(
+                        value: state.accentOnFirstBeat,
+                        onChanged: (value) {
+                          context.read<MetronomeBloc>().add(
+                                MetronomeAccentFirstBeatToggled(),
+                              );
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
             ],

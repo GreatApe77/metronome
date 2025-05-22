@@ -11,6 +11,7 @@ class AppWidget extends StatelessWidget {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, state) {
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Metronome',
           themeMode: state is ThemeDark ? ThemeMode.dark : ThemeMode.light,
           darkTheme: ThemeData.from(colorScheme: ThemeColors.darkColorScheme),
