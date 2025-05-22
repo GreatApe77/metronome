@@ -4,27 +4,36 @@ import 'package:bloc/bloc.dart';
 import 'package:metronome/domain/audio_player.dart';
 import 'package:metronome/domain/metronome.dart';
 import 'package:metronome/domain/tick.dart';
+import 'package:metronome/shared/assets.dart';
 
 part 'metronome_event.dart';
 part 'metronome_state.dart';
 
 class MetronomeBloc extends Bloc<MetronomeEvent, MetronomeState> {
   final Metronome _metronome;
-  final AudioPlayer _regularTickBeatPlayer;
+  final AudioPlayer _audioPlayer;
   late StreamSubscription<Tick> _tickStreamSub;
   MetronomeBloc({
     required Metronome metronome,
     required AudioPlayer audioPlayer,
-  })  : _regularTickBeatPlayer = audioPlayer,
+  })  : _audioPlayer = audioPlayer,
         _metronome = metronome,
         super(
-          MetronomeState(bpm: metronome.bpm, isRunning: metronome.isRunning),
+          MetronomeState(
+            bpm: metronome.bpm,
+            isRunning: metronome.isRunning,
+            accentOnFirstBeat: true,
+          ),
         ) {
     _tickStreamSub = _metronome.tickStream().listen((tick) {
       add(MetronomeTicked(tick: tick));
     });
     on<MetronomeTicked>((event, emit) {
-      _regularTickBeatPlayer.playAudio();
+      final audioToBePlayed =
+          event.tick.measureIndex == 0 && state.accentOnFirstBeat
+              ? Assets.accentTickSoundFilePath
+              : Assets.tickSoundFilePath;
+      _audioPlayer.playAudio(audioToBePlayed);
       emit(state.copyWith(tick: event.tick));
     });
     on<MetronomePlayed>((event, emit) {

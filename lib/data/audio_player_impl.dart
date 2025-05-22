@@ -2,7 +2,6 @@ import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:metronome/domain/audio_player.dart';
 import 'package:metronome/domain/disposable.dart';
 import 'package:metronome/domain/initializable.dart';
-import 'package:metronome/shared/assets.dart';
 
 class AudioPlayerImpl implements AudioPlayer, Disposable, Initializable {
   final SoLoud _soLoud = SoLoud.instance;
@@ -18,13 +17,13 @@ class AudioPlayerImpl implements AudioPlayer, Disposable, Initializable {
   }
 
   @override
-  Future<void> playAudio() async {
+  Future<void> playAudio(String soundFilePath) async {
     try {
       final source = await _soLoud.loadAsset(
-        'assets/${Assets.tickSoundFilePath}',
+        'assets/$soundFilePath',
         mode: LoadMode.memory,
       );
       await _soLoud.play(source);
-    } on SoLoudException catch (e) {}
+    } on SoLoudException {}
   }
 }

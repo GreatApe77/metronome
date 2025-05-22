@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:metronome/domain/disposable.dart';
 import 'package:metronome/domain/metronome.dart';
 import 'package:metronome/domain/tick.dart';
 
 class MetronomeImpl implements Metronome {
   int _bpm;
   int _beatCounter = 0;
-  int _beatsPerMeasure = 4;
+  final int _beatsPerMeasure = 4;
   final StreamController<Tick> _metronomeStreamController =
       StreamController<Tick>.broadcast();
   Timer? _timer;

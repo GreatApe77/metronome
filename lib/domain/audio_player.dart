@@ -1,3 +1,3 @@
 abstract interface class AudioPlayer {
-  Future<void> playAudio();
+  Future<void> playAudio(String soundFilePath);
 }
