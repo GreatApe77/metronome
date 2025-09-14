@@ -1,17 +1,59 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metronome/blocs/metronome/metronome_bloc.dart';
 import 'package:metronome/blocs/theme/theme_bloc.dart';
 
 import 'package:metronome/view/widgets/measure_bar.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  late StreamSubscription<MetronomeState> sub;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      sub = context.read<MetronomeBloc>().stream.listen((event) {
+        if (event is MetronomePlayed) {
+          WakelockPlus.enable();
+        }
+        if (event is MetronomePaused) {
+          WakelockPlus.disable();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    sub.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      context.read<MetronomeBloc>().add(MetronomePaused());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Center(
@@ -19,8 +61,10 @@ class HomePage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               BlocBuilder<MetronomeBloc, MetronomeState>(
-                buildWhen: (previous, current) =>
-                    previous.tick?.measureIndex != current.tick?.measureIndex,
+                buildWhen:
+                    (previous, current) =>
+                        previous.tick?.measureIndex !=
+                        current.tick?.measureIndex,
                 builder: (context, state) {
                   return MeasureBar(
                     notesPerMeasure: 4,
@@ -35,8 +79,8 @@ class HomePage extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       context.read<MetronomeBloc>().add(
-                            MetronomeBpmDecremented(),
-                          );
+                        MetronomeBpmDecremented(),
+                      );
                     },
                     icon: Icon(Icons.remove),
                   ),
@@ -51,8 +95,8 @@ class HomePage extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       context.read<MetronomeBloc>().add(
-                            MetronomeBpmIncremented(),
-                          );
+                        MetronomeBpmIncremented(),
+                      );
                     },
                     icon: Icon(Icons.add),
                   ),
@@ -69,8 +113,8 @@ class HomePage extends StatelessWidget {
                     max: 250,
                     onChanged: (value) {
                       context.read<MetronomeBloc>().add(
-                            MetronomeBpmChanged(bpm: value.round()),
-                          );
+                        MetronomeBpmChanged(bpm: value.round()),
+                      );
                     },
                   );
                 },
@@ -81,8 +125,8 @@ class HomePage extends StatelessWidget {
                   BlocBuilder<ThemeBloc, ThemeState>(
                     builder: (context, state) {
                       return IconButton(
-                        onPressed: () =>
-                            context.read<ThemeBloc>().add(ThemeToggled()),
+                        onPressed:
+                            () => context.read<ThemeBloc>().add(ThemeToggled()),
                         icon: Icon(
                           state is ThemeDark
                               ? Icons.light_mode
@@ -97,28 +141,31 @@ class HomePage extends StatelessWidget {
                         onPressed: () {
                           if (state.isRunning) {
                             context.read<MetronomeBloc>().add(
-                                  MetronomePaused(),
-                                );
+                              MetronomePaused(),
+                            );
                             return;
                           }
                           context.read<MetronomeBloc>().add(MetronomePlayed());
                         },
-                        child: state.isRunning
-                            ? Icon(Icons.pause)
-                            : Icon(Icons.play_arrow),
+                        child:
+                            state.isRunning
+                                ? Icon(Icons.pause)
+                                : Icon(Icons.play_arrow),
                       );
                     },
                   ),
                   BlocBuilder<MetronomeBloc, MetronomeState>(
-                    buildWhen: (previous, current) =>
-                        previous.accentOnFirstBeat != current.accentOnFirstBeat,
+                    buildWhen:
+                        (previous, current) =>
+                            previous.accentOnFirstBeat !=
+                            current.accentOnFirstBeat,
                     builder: (context, state) {
                       return Switch(
                         value: state.accentOnFirstBeat,
                         onChanged: (value) {
                           context.read<MetronomeBloc>().add(
-                                MetronomeAccentFirstBeatToggled(),
-                              );
+                            MetronomeAccentFirstBeatToggled(),
+                          );
                         },
                       );
                     },

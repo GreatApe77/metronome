@@ -43,6 +43,7 @@ dependencies:
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1
   hydrated_bloc: ^10.0.0
+  wakelock_plus: ^1.4.0
 
 dev_dependencies:
   flutter_test:

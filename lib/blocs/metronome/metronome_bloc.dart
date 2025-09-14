@@ -16,15 +16,15 @@ class MetronomeBloc extends Bloc<MetronomeEvent, MetronomeState> {
   MetronomeBloc({
     required Metronome metronome,
     required AudioPlayer audioPlayer,
-  })  : _audioPlayer = audioPlayer,
-        _metronome = metronome,
-        super(
-          MetronomeState(
-            bpm: metronome.bpm,
-            isRunning: metronome.isRunning,
-            accentOnFirstBeat: true,
-          ),
-        ) {
+  }) : _audioPlayer = audioPlayer,
+       _metronome = metronome,
+       super(
+         MetronomeState(
+           bpm: metronome.bpm,
+           isRunning: metronome.isRunning,
+           accentOnFirstBeat: true,
+         ),
+       ) {
     _tickStreamSub = _metronome.tickStream().listen((tick) {
       add(MetronomeTicked(tick: tick));
     });
