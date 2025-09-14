@@ -18,17 +18,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late StreamSubscription<MetronomeState> sub;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       sub = context.read<MetronomeBloc>().stream.listen((event) {
-        if (event is MetronomePlayed) {
+        if (event.isRunning) {
           WakelockPlus.enable();
-        }
-        if (event is MetronomePaused) {
+        } else {
           WakelockPlus.disable();
         }
       });
