@@ -26,9 +26,7 @@ class AudioPlayerImpl implements AudioPlayer, Disposable, Initializable {
         'assets/accent_tick.wav',
         mode: LoadMode.memory,
       );
-    } on SoLoudException catch (e) {
-      print('Error loading audio sources: $e');
-    }
+    } on SoLoudException {}
   }
 
   @override
@@ -51,8 +49,6 @@ class AudioPlayerImpl implements AudioPlayer, Disposable, Initializable {
         );
         _soLoud.play(loadedSource);
       }
-    } on SoLoudException catch (e) {
-      print('Error playing audio: $e');
-    }
+    } on SoLoudException {}
   }
 }

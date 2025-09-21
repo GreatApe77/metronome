@@ -23,6 +23,8 @@ linter:
   rules:
     formatter:
       page_width: 120
+      trailing_commas: preserve
+
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 # Additional information about this file can be found at
