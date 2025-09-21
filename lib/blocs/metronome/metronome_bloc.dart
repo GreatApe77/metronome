@@ -76,6 +76,6 @@ class MetronomeBloc extends Bloc<MetronomeEvent, MetronomeState> {
   }
 
   bool _isValidBpmRange(int bpm) {
-    return 1 <= bpm && bpm <= 250;
+    return 1 <= bpm && bpm <= 350;
   }
 }

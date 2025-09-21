@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   return Slider(
                     value: state.bpm.toDouble(),
                     min: 1,
-                    max: 250,
+                    max: 350,
                     onChanged: (value) {
                       context.read<MetronomeBloc>().add(
                         MetronomeBpmChanged(bpm: value.round()),
