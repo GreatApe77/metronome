@@ -50,9 +50,51 @@ android {
 
     buildTypes {
         release {
-
             signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    applicationVariants.all {
+        val variant = this
+        val appName = "metronome"
+        val versionName = variant.versionName
+        val buildType = variant.buildType.name
         
+        //APK config
+        variant.outputs
+            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+            .forEach { output ->
+                val abi = output.getFilter(com.android.build.OutputFile.ABI)
+                val abiSuffix = if (abi != null) "_${abi}" else ""
+                output.outputFileName = "${appName}_v${versionName}_${buildType}${abiSuffix}.apk"
+            }
+    }
+
+    //AAB config
+    tasks.whenTaskAdded {
+        if (name.startsWith("bundle")) {
+            doLast {
+                val buildType = when {
+                    name.contains("Release") -> "release"
+                    name.contains("Debug") -> "debug"
+                    name.contains("Profile") -> "profile"
+                    else -> "unknown"
+                }
+                val appName = "metronome"
+                val versionName = android.defaultConfig.versionName
+                
+                // Find and rename the AAB file
+                val bundleDir = file("${buildDir}/outputs/bundle/${buildType}")
+                if (bundleDir.exists()) {
+                    bundleDir.listFiles()?.forEach { file ->
+                        if (file.name.endsWith(".aab")) {
+                            val newName = "${appName}_v${versionName}_${buildType}.aab"
+                            val newFile = File(bundleDir, newName)
+                            file.renameTo(newFile)
+                        }
+                    }
+                }
+            }
         }
     }
 }
