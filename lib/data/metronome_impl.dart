@@ -41,8 +41,6 @@ class MetronomeImpl implements Metronome {
         Duration(milliseconds: intervalInMs),
         (_) => _handleTick(),
       );
-
-      //
     }
   }
 
