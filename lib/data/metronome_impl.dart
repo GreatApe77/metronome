@@ -33,6 +33,17 @@ class MetronomeImpl implements Metronome {
   @override
   void setBpm(int bpm) {
     _bpm = bpm;
+    if (_isRunning) {
+      final intervalInMs = _calculateIntervalInMs();
+      _timer?.cancel();
+      _timer = null;
+      _timer = Timer.periodic(
+        Duration(milliseconds: intervalInMs),
+        (_) => _handleTick(),
+      );
+
+      //
+    }
   }
 
   @override
