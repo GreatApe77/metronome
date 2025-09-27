@@ -23,10 +23,15 @@ class MetronomeBloc extends Bloc<MetronomeEvent, MetronomeState> {
            bpm: metronome.bpm,
            isRunning: metronome.isRunning,
            accentOnFirstBeat: true,
+           beatsPerMeasure: metronome.beatsPerMeasure,
          ),
        ) {
     _tickStreamSub = _metronome.tickStream().listen((tick) {
       add(MetronomeTicked(tick: tick));
+    });
+    on<MetronomeBeatsPerMeasureChanged>((event, emit) {
+      _metronome.setBeatsPerMeasure(event.beatsPerMeasureChanged);
+      emit(state.copyWith(beatsPerMeasure: event.beatsPerMeasureChanged));
     });
     on<MetronomeTicked>((event, emit) {
       final audioToBePlayed =

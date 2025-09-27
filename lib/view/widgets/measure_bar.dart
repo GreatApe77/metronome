@@ -15,6 +15,7 @@ class MeasureBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      spacing: 2,
       children: List.generate(notesPerMeasure, (index) {
         if (currentIndex == null || currentIndex != index) {
           return Container(

@@ -6,7 +6,7 @@ import 'package:metronome/domain/tick.dart';
 class MetronomeImpl implements Metronome {
   int _bpm;
   int _beatCounter = 0;
-  final int _beatsPerMeasure = 4;
+  final int _beatsPerMeasure = 16;
   final StreamController<Tick> _metronomeStreamController =
       StreamController<Tick>.broadcast();
   Timer? _timer;
@@ -78,5 +78,10 @@ class MetronomeImpl implements Metronome {
       Tick(tickType: TickType.regular, measureIndex: measureIndex),
     );
     _beatCounter++;
+  }
+
+  @override
+  void setBeatsPerMeasure(int beatsPerMeasure) {
+    beatsPerMeasure = beatsPerMeasure;
   }
 }

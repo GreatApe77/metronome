@@ -12,6 +12,12 @@ class MetronomeBpmChanged extends MetronomeEvent {
   MetronomeBpmChanged({required this.bpm});
 }
 
+class MetronomeBeatsPerMeasureChanged extends MetronomeEvent{
+  final int beatsPerMeasureChanged;
+
+  MetronomeBeatsPerMeasureChanged({required this.beatsPerMeasureChanged});
+}
+
 class MetronomeTicked extends MetronomeEvent {
   final Tick tick;
 
